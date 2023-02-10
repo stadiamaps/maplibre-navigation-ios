@@ -691,19 +691,17 @@ extension RouteMapViewController: NavigationViewDelegate {
         var streetsSources: [MGLVectorTileSource] = style.sources.compactMap {
             $0 as? MGLVectorTileSource
             }.filter {
-                $0.isMapboxStreets
+                $0.isOpenMapTiles
         }
 
         // Add Mapbox Streets if the map does not already have it
         if streetsSources.isEmpty {
-            let source = MGLVectorTileSource(identifier: "mapboxStreetsv7", configurationURL: URL(string: "mapbox://mapbox.mapbox-streets-v7")!)
-            style.addSource(source)
-            streetsSources.append(source)
+            print("Missing road layer!")
         }
 
         if let mapboxSteetsSource = streetsSources.first, style.layer(withIdentifier: roadLabelLayerIdentifier) == nil {
             let streetLabelLayer = MGLLineStyleLayer(identifier: roadLabelLayerIdentifier, source: mapboxSteetsSource)
-            streetLabelLayer.sourceLayerIdentifier = "road_label"
+            streetLabelLayer.sourceLayerIdentifier = "transportation_name"
             streetLabelLayer.lineOpacity = NSExpression(forConstantValue: 1)
             streetLabelLayer.lineWidth = NSExpression(forConstantValue: 20)
             streetLabelLayer.lineColor = NSExpression(forConstantValue: UIColor.white)
@@ -779,8 +777,9 @@ extension RouteMapViewController: NavigationViewDelegate {
 
     private func roadFeature(for line: MGLMultiPolylineFeature) -> (roadName: String?, shieldName: NSAttributedString?) {
         let roadNameRecord = roadFeatureHelper(ref: line.attribute(forKey: "ref"),
-                                            shield: line.attribute(forKey: "shield"),
-                                            reflen: line.attribute(forKey: "reflen"),
+//                                            shield: line.attribute(forKey: "shield"),
+                                               shield: nil, // TODO
+                                            reflen: line.attribute(forKey: "ref_length"),
                                               name: line.attribute(forKey: "name"))
 
         return (roadName: roadNameRecord.roadName, shieldName: roadNameRecord.shieldName)

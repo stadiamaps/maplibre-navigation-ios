@@ -993,7 +993,7 @@ open class NavigationMapView: MGLMapView, UIGestureRecognizerDelegate {
         let streetsSourceIdentifiers: [String] = style.sources.compactMap {
             $0 as? MGLVectorTileSource
         }.filter {
-            $0.isMapboxStreets
+            $0.isOpenMapTiles
         }.map {
             $0.identifier
         }
@@ -1009,7 +1009,7 @@ open class NavigationMapView: MGLMapView, UIGestureRecognizerDelegate {
             }
             
             // Road labels should match road signage.
-            let locale = layer.sourceLayerIdentifier == "road_label" ? Locale(identifier: "mul") : nil
+            let locale = layer.sourceLayerIdentifier == "transportation_name" ? Locale(identifier: "mul") : nil
             
             let localizedText = text.mgl_expressionLocalized(into: locale)
             if localizedText != text {
